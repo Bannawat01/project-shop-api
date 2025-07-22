@@ -1,7 +1,7 @@
 package model
 
 type (
-	Item struct {
+	Item struct { //จังหวะนี้จะใช้ json เพราะเราต้องสร้าง fill ให้ฝั่ง client
 		ID          uint64 `json:"id"`
 		Name        string `json:"name"`
 		Description string `json:"description"`

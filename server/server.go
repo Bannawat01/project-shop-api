@@ -55,9 +55,9 @@ func (s *echoServer) Start() {
 	s.app.Use(timeOutMiddleware)
 
 	s.app.GET("/v1/health", s.healthCheck)
-	s.app.GET("/v1/panic", func(c echo.Context) error {
-		panic("Panic")
-	})
+	// s.app.GET("/v1/panic", func(c echo.Context) error {
+	// 	panic("Panic")
+	// })
 
 	quitCh := make(chan os.Signal, 1)
 
@@ -90,9 +90,9 @@ func (s *echoServer) healthCheck(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
 }
 
-func getLoggerMiddleware() echo.MiddlewareFunc {
-	return middleware.Logger()
-}
+// func getLoggerMiddleware() echo.MiddlewareFunc {
+// 	return middleware.Logger()
+// }
 
 func getTimeoutMiddleware(timeOut time.Duration) echo.MiddlewareFunc { //กำหนดเวลา timeout ของ request
 	return middleware.TimeoutWithConfig(middleware.TimeoutConfig{
@@ -102,7 +102,7 @@ func getTimeoutMiddleware(timeOut time.Duration) echo.MiddlewareFunc { //กำ�
 	})
 }
 
-func getCORSMMiddleware(allawOrigin []string) echo.MiddlewareFunc {
+func getCORSMMiddleware(allawOrigin []string) echo.MiddlewareFunc { //มีไว้กัน client ที่ไม่ใช่ origin ของเราเข้ามาใช้ API
 	return middleware.CORSWithConfig(middleware.CORSConfig{
 		Skipper:      middleware.DefaultSkipper,
 		AllowOrigins: allawOrigin,
