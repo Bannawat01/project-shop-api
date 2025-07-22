@@ -59,6 +59,9 @@ func (s *echoServer) Start() {
 	// 	panic("Panic")
 	// })
 
+	// Initialize routes
+	s.initItemShopRouter()
+
 	quitCh := make(chan os.Signal, 1)
 
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM) //กระบวนการเพื่อที่จะ shutdown server จำเป็นต้องมีสัญญาณ 3 ตัวนี้

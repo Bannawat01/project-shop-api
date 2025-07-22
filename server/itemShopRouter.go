@@ -10,7 +10,7 @@ func (s *echoServer) initItemShopRouter() {
 	router := s.app.Group("/v1/item-shop")
 
 	itemShopRepository := _itemShopRepository.NewItemShopRepositoryImpl(s.db, s.app.Logger)
-	itemShopService := _itemShopService.NewItemShopRepositoryImpl(itemShopRepository)
+	itemShopService := _itemShopService.NewItemShopServiceImpl(itemShopRepository)
 	itemShopController := _itemShopController.NewItemShopControllerImpl(itemShopService)
 
 	router.GET("", itemShopController.Listing) //หลังจากที่ทำ router เสร็จแล้ว ตัว application ยังไม่รู้ว่าเรามีการประกาศ route นี้อยู่
