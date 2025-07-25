@@ -10,14 +10,14 @@ type (
 	}
 
 	ItemFilter struct {
-		Name        string `query:"name" validate:"omitempty,max=64"`
+		Name        string `query:"name" validate:"omitempty,max=64"` //method get ใช้ boddy ไม่ได้ แต่ใช้ query
 		Description string `query:"description" validate:"omitempty,max=128"`
 		Paginate
 	}
 
 	Paginate struct {
-		Page int64 `query:"page" validate:"required,min=1"`
-		Size int64 `query:"size" validate:"required,min=1,max=20"`
+		Page int64 `query:"page" validate:"omitempty,min=1"`
+		Size int64 `query:"size" validate:"omitempty,min=1,max=20"`
 	}
 
 	ItemResult struct {

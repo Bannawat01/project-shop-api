@@ -72,8 +72,10 @@ func (s *echoServer) Start() {
 
 func (s *echoServer) httpListening() {
 	url := fmt.Sprintf(":%d", s.conf.Server.Port)
+	s.app.Logger.Infof("Starting server on %s", url)
 
 	if err := s.app.Start(url); err != nil && err != http.ErrServerClosed {
+		s.app.Logger.Errorf("Server failed to start: %v", err)
 		s.app.Logger.Fatal("Shutting down the server")
 	}
 }

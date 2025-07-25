@@ -5,5 +5,5 @@ import (
 )
 
 type ItemShopService interface {
-	Listing() ([]*_itemShopModel.Item, error) //_itemShopModel 	ต้อง import เข้ามาเอง
+	Listing(itemFilter *_itemShopModel.ItemFilter) ([]*_itemShopModel.Item, error) //_itemShopModel 	ต้อง import เข้ามาเอง
 }

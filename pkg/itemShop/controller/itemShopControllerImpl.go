@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Bannawat101/project-shop-api/pkg/custom"
+	_itemShopModel "github.com/Bannawat101/project-shop-api/pkg/itemShop/model"
 	_itemShopService "github.com/Bannawat101/project-shop-api/pkg/itemShop/service"
 	"github.com/labstack/echo/v4"
 )
@@ -17,7 +18,14 @@ func NewItemShopControllerImpl(itemShopService _itemShopService.ItemShopService)
 }
 
 func (c *itemShopControllerImpl) Listing(pctx echo.Context) error {
-	itemModelist, err := c.itemShopService.Listing()
+	itemFilter := new(_itemShopModel.ItemFilter)
+	customEchoRequest := custom.NewCustomEchoRequest(pctx)
+
+	if err := customEchoRequest.Bind(itemFilter); err != nil {
+		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) // Handle validation error with custom error response
+	}
+
+	itemModelist, err := c.itemShopService.Listing(itemFilter)
 	if err != nil {
 		return custom.CustomError(pctx, http.StatusInternalServerError, err.Error()) // Handle error with custom error response
 	}
