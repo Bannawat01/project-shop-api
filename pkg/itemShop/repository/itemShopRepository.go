@@ -7,4 +7,5 @@ import (
 
 type ItemShopRepository interface { //เผื่อในกรณีที่ต้องการทำ mock
 	Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error)
+	Counting(itemFilter *_itemShopModel.ItemFilter) (int64, error)
 }

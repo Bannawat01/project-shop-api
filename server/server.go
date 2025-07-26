@@ -61,6 +61,7 @@ func (s *echoServer) Start() {
 
 	// Initialize routes
 	s.initItemShopRouter()
+	s.initItemManagingRouter()
 
 	quitCh := make(chan os.Signal, 1)
 

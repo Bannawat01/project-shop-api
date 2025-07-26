@@ -6,7 +6,7 @@ import (
 	_itemShopService "github.com/Bannawat101/project-shop-api/pkg/itemShop/service"
 )
 
-func (s *echoServer) initItemShopRouter() {
+func (s *echoServer) initItemManagingRouter() {
 	router := s.app.Group("/v1/item-shop")
 
 	itemShopRepository := _itemShopRepository.NewItemShopRepositoryImpl(s.db, s.app.Logger)

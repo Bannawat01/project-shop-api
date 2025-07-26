@@ -20,7 +20,7 @@ func NewItemShopRepositoryImpl(db *gorm.DB, logger echo.Logger) ItemShopReposito
 func (r *ItemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error) {
 	itemList := make([]*entities.Item, 0)
 
-	query := r.db.Model(&entities.Item{}) //select * from items
+	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
 	if itemFilter.Name != "" {
 		query = query.Where("name ilike ?", "%"+itemFilter.Name+"%") // Filter by name if provided
 	}
@@ -28,10 +28,33 @@ func (r *ItemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) 
 		query = query.Where("description ilike ?", "%"+itemFilter.Description+"%") //
 	}
 
-	if err := query.Find(&itemList).Error; err != nil {
+	// (page -1 * size) = offset
+	offset := int((itemFilter.Paginate.Page - 1) * itemFilter.Paginate.Size)
+	limit := int(itemFilter.Size)
+
+	if err := query.Offset(offset).Limit(limit).Find(&itemList).Order("id asc").Error; err != nil {
 		r.logger.Errorf("Error getting item list: %s", err)
 		return nil, &_itemSopException.Itemisting{} // Return custom error type for item listing
 	}
 
 	return itemList, nil //Service is next
+}
+
+func (r *ItemShopRepositoryImpl) Counting(itemFilter *_itemShopModel.ItemFilter) (int64, error) {
+	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
+	if itemFilter.Name != "" {
+		query = query.Where("name ilike ?", "%"+itemFilter.Name+"%") // Filter by name if provided
+	}
+	if itemFilter.Description != "" {
+		query = query.Where("description ilike ?", "%"+itemFilter.Description+"%") //
+	}
+
+	// count := new(int64)
+	var count int64 //ถ้าใช้อันนี้เวลามี null จะไม่เกิด panic
+	if err := query.Count(&count).Error; err != nil {
+		r.logger.Errorf("Counting item failed: %s", err)
+		return -1, &_itemSopException.ItemCounting{} // Return custom error type for item listing
+	}
+
+	return count, nil //Service is next
 }

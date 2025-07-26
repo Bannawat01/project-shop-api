@@ -25,6 +25,14 @@ func (c *itemShopControllerImpl) Listing(pctx echo.Context) error {
 		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) // Handle validation error with custom error response
 	}
 
+	// Set default pagination values if not provided
+	if itemFilter.Page == 0 {
+		itemFilter.Page = 1
+	}
+	if itemFilter.Size == 0 {
+		itemFilter.Size = 10
+	}
+
 	itemModelist, err := c.itemShopService.Listing(itemFilter)
 	if err != nil {
 		return custom.CustomError(pctx, http.StatusInternalServerError, err.Error()) // Handle error with custom error response

@@ -1,8 +1,9 @@
 package entities
 
 import (
-	_itemShopModel "github.com/Bannawat101/project-shop-api/pkg/itemShop/model"
 	"time"
+
+	_itemShopModel "github.com/Bannawat101/project-shop-api/pkg/itemShop/model"
 )
 
 type Item struct {
@@ -17,7 +18,7 @@ type Item struct {
 	UpdatedAt   time.Time `gorm:"not null;autoUpdateTime;"`
 }
 
-func (i *Item) ToItemModel() *_itemShopModel.Item { //ต้องมี function นี้เพื่อที่จะแปลงกลับไปเป็น item shop model
+func (i *Item) ToItemModel() *_itemShopModel.Item {
 	return &_itemShopModel.Item{
 		ID:          i.ID,
 		Name:        i.Name,
