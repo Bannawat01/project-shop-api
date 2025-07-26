@@ -1,26 +1,26 @@
 package repository
 
 import (
+	"github.com/Bannawat101/project-shop-api/databases"
 	"github.com/Bannawat101/project-shop-api/entities"
 	_itemSopException "github.com/Bannawat101/project-shop-api/pkg/itemShop/exception"
 	_itemShopModel "github.com/Bannawat101/project-shop-api/pkg/itemShop/model"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
 type ItemShopRepositoryImpl struct {
-	db     *gorm.DB
+	db     databases.Database
 	logger echo.Logger
 }
 
-func NewItemShopRepositoryImpl(db *gorm.DB, logger echo.Logger) ItemShopRepository {
+func NewItemShopRepositoryImpl(db databases.Database, logger echo.Logger) ItemShopRepository {
 	return &ItemShopRepositoryImpl{db, logger}
 }
 
 func (r *ItemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error) {
 	itemList := make([]*entities.Item, 0)
 
-	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
+	query := r.db.Connect().Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
 	if itemFilter.Name != "" {
 		query = query.Where("name ilike ?", "%"+itemFilter.Name+"%") // Filter by name if provided
 	}
@@ -41,7 +41,7 @@ func (r *ItemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) 
 }
 
 func (r *ItemShopRepositoryImpl) Counting(itemFilter *_itemShopModel.ItemFilter) (int64, error) {
-	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
+	query := r.db.Connect().Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
 	if itemFilter.Name != "" {
 		query = query.Where("name ilike ?", "%"+itemFilter.Name+"%") // Filter by name if provided
 	}
@@ -57,4 +57,14 @@ func (r *ItemShopRepositoryImpl) Counting(itemFilter *_itemShopModel.ItemFilter)
 	}
 
 	return count, nil //Service is next
+}
+
+func (r *ItemShopRepositoryImpl) FindByID(itemID uint64) (*entities.Item, error) {
+	item := new(entities.Item)
+	if err := r.db.Connect().First(item, itemID).Error; err != nil {
+		r.logger.Errorf("Item with ID %d not found: %s", itemID, err)
+		return nil, &_itemSopException.ItemNotFound{}
+	}
+	return item, nil
+
 }

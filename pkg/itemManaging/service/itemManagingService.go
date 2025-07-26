@@ -7,4 +7,6 @@ import (
 
 type ItemManagingService interface {
 	Creating(itemCreatingReq *_itemManagingModel.ItemCreateReq) (*_itemShopModel.Item, error)
+	Editing(itemID uint64, itemEditingReq *_itemManagingModel.ItemEditingReq) (*_itemShopModel.Item, error)
+	Archive(itemID uint64) error
 }
