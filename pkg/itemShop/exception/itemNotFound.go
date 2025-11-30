@@ -1,7 +1,7 @@
 package exception
 
 type ItemNotFound struct {
-	ItemID uint64
+	ItemID string
 }
 
 func (e *ItemNotFound) Error() string {
