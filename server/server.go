@@ -44,15 +44,15 @@ func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
 }
 
 func (s *echoServer) Start() {
-	corsMiddleware := getCORSMMiddleware(s.conf.Server.AllowOrigins)
-	bodyLimitMiddleware := getBoddyLimitMiddleware(s.conf.Server.BodyLimit)
-	timeOutMiddleware := getTimeoutMiddleware(s.conf.Server.Timeout)
+	corsMiddleware := getCORSMMiddleware(s.conf.Server.AllowOrigins)        //กำหนดค่า CORS middleware
+	bodyLimitMiddleware := getBoddyLimitMiddleware(s.conf.Server.BodyLimit) //กำหนดค่า Body Limit middleware
+	timeOutMiddleware := getTimeoutMiddleware(s.conf.Server.Timeout)        //กำหนดค่า Timeout middleware
 
-	s.app.Use(middleware.Recover())
-	s.app.Use(middleware.Logger())
-	s.app.Use(corsMiddleware)
-	s.app.Use(bodyLimitMiddleware)
-	s.app.Use(timeOutMiddleware)
+	s.app.Use(middleware.Recover()) //ใช้ middleware เพื่อจัดการกับ panic ที่เกิดขึ้นในแอปพลิเคชัน
+	s.app.Use(middleware.Logger())  //ใช้ middleware เพื่อบันทึก log ของคำขอที่เข้ามา
+	s.app.Use(corsMiddleware)       //ใช้ CORS middleware
+	s.app.Use(bodyLimitMiddleware)  //ใช้ Body Limit middleware
+	s.app.Use(timeOutMiddleware)    //ใช้ Timeout middleware
 
 	s.app.GET("/v1/health", s.healthCheck)
 	// s.app.GET("/v1/panic", func(c echo.Context) error {
@@ -64,18 +64,17 @@ func (s *echoServer) Start() {
 	s.initItemManagingRouter()
 
 	quitCh := make(chan os.Signal, 1)
-
-	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM) //กระบวนการเพื่อที่จะ shutdown server จำเป็นต้องมีสัญญาณ 3 ตัวนี้
+	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM) //กระบวนการเพื่อที่จะ shutdown er จำเป็นต้องมีสัญญาณ 3 ตัวนี้
 	go s.gracefulShutdown(quitCh)
 
 	s.httpListening()
 }
 
 func (s *echoServer) httpListening() {
-	url := fmt.Sprintf(":%d", s.conf.Server.Port)
+	url := fmt.Sprintf(":%d", s.conf.Server.Port) //กำหนดพอร์ตที่เซิร์ฟเวอร์จะฟังคำขอ
 	s.app.Logger.Infof("Starting server on %s", url)
 
-	if err := s.app.Start(url); err != nil && err != http.ErrServerClosed {
+	if err := s.app.Start(url); err != nil && err != http.ErrServerClosed { //ตรวจสอบข้อผิดพลาดที่อาจเกิดขึ้นระหว่างการเริ่มต้นเซิร์ฟเวอร์ HTTP
 		s.app.Logger.Errorf("Server failed to start: %v", err)
 		s.app.Logger.Fatal("Shutting down the server")
 	}
@@ -101,9 +100,9 @@ func (s *echoServer) healthCheck(c echo.Context) error {
 // }
 
 func getTimeoutMiddleware(timeOut time.Duration) echo.MiddlewareFunc { //กำหนดเวลา timeout ของ request
-	return middleware.TimeoutWithConfig(middleware.TimeoutConfig{
-		Skipper:      middleware.DefaultSkipper,
-		ErrorMessage: "Request timeout",
+	return middleware.TimeoutWithConfig(middleware.TimeoutConfig{ //กำหนดค่า timeout
+		Skipper:      middleware.DefaultSkipper, //กำหนดเงื่อนไขการข้าม middleware (ถ้าไม่ต้องการข้ามก็ใช้ DefaultSkipper)
+		ErrorMessage: "Request timeout",         //ข้อความแสดงเมื่อเกิด timeout
 		Timeout:      timeOut * time.Second,
 	})
 }
@@ -111,7 +110,7 @@ func getTimeoutMiddleware(timeOut time.Duration) echo.MiddlewareFunc { //กำ�
 func getCORSMMiddleware(allawOrigin []string) echo.MiddlewareFunc { //มีไว้กัน client ที่ไม่ใช่ origin ของเราเข้ามาใช้ API
 	return middleware.CORSWithConfig(middleware.CORSConfig{
 		Skipper:      middleware.DefaultSkipper,
-		AllowOrigins: allawOrigin,
+		AllowOrigins: allawOrigin,                                                            //กำหนดว่าอนุญาตให้ client จาก origin ไหนเข้ามาใช้ API ได้บ้าง
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.PATCH},       //กำหนด method ที่อนุญาตให้ใช้ได้
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept}, //กำหนด header ที่อนุญาตให้ใช้ได้
 	})

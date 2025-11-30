@@ -6,6 +6,6 @@ type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
-func CustomError(pctx echo.Context, statusCode int, message string) error {
-	return pctx.JSON(statusCode, &ErrorMessage{Message: message})
+func CustomError(pctx echo.Context, statusCode int, message string) error { //ฟังก์ชันสำหรับส่งข้อความแสดงข้อผิดพลาดแบบกำหนดเอง
+	return pctx.JSON(statusCode, &ErrorMessage{Message: message}) //ส่งข้อความแสดงข้อผิดพลาดในรูปแบบ JSON พร้อมกับรหัสสถานะ HTTP ที่กำหนด
 }

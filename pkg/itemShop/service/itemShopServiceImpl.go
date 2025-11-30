@@ -7,30 +7,29 @@ import (
 )
 
 type itemShopServiceImpl struct {
-	ItemShopRepository _itemShopRepository.ItemShopRepository
+	ItemShopRepository _itemShopRepository.ItemShopRepository //inject repository เข้ามาใช้ใน service
 }
 
-func NewItemShopServiceImpl(itemShopRepository _itemShopRepository.ItemShopRepository) ItemShopService {
+func NewItemShopServiceImpl(itemShopRepository _itemShopRepository.ItemShopRepository) ItemShopService { //สร้าง instance ของ service implementation
 	return &itemShopServiceImpl{itemShopRepository}
 }
 
-func (s *itemShopServiceImpl) Listing(itemFilter *_itemShopModel.ItemFilter) (*_itemShopModel.ItemResult, error) {
-	itemList, err := s.ItemShopRepository.Listing(itemFilter)
+func (s *itemShopServiceImpl) Listing(itemFilter *_itemShopModel.ItemFilter) (*_itemShopModel.ItemResult, error) { //ดึงรายการสินค้า
+	itemList, err := s.ItemShopRepository.Listing(itemFilter) //เรียกใช้ method Listing จาก repository
 	if err != nil {
 		return nil, err
 	}
 
-	itemCounting, err := s.ItemShopRepository.Counting(itemFilter)
+	itemCounting, err := s.ItemShopRepository.Counting(itemFilter) //เรียกใช้ method Counting จาก repository
 	if err != nil {
 		return nil, err
 	}
 
-	size := itemFilter.Size
-	page := itemFilter.Page
+	size := itemFilter.Size //ขนาดของหน้าที่ส่งมาจาก client เพื่อใช้ในการคำนวณหน้าทั้งหมด
+	page := itemFilter.Page //หน้าปัจจุบันที่ส่งมาจาก client เพื่อใช้ในการสร้าง response
 
-	totalPage := s.totalPageCalculation(itemCounting, size)
-	result := s.toItemResultResponse(itemList, page, totalPage) //go to controller next
-
+	totalPage := s.totalPageCalculation(itemCounting, size)     //คำนวณหาจำนวนหน้าทั้งหมด
+	result := s.toItemResultResponse(itemList, page, totalPage) //แปลงข้อมูลเป็นรูปแบบ response ที่ต้องการ
 	return result, nil
 
 }

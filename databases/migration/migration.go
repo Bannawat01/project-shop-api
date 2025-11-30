@@ -8,19 +8,19 @@ import (
 )
 
 func main() {
-	conf := config.ConfigGetting()
-	db := databases.NewPostgresDatabase(conf.Database)
+	conf := config.ConfigGetting()                     //โหลดค่าคอนฟิกจากไฟล์ yml
+	db := databases.NewPostgresDatabase(conf.Database) //สร้างการเชื่อมต่อฐานข้อมูล Postgres
 
-	tx := db.Connect().Begin()
+	tx := db.Connect().Begin() //เริ่มต้น transaction เพื่อให้การมิเกรชันมีความปลอดภัยมากขึ้น
 
-	playerMigration(tx)
+	playerMigration(tx) //เรียกใช้ฟังก์ชันมิเกรชันสำหรับแต่ละตาราง
 	adminMigration(tx)
 	itemMigration(tx)
 	playerCoinMigration(tx)
 	inventoryMigration(tx)
 	purchaseHistoryMigration(tx)
 
-	if err := tx.Commit().Error; err != nil {
+	if err := tx.Commit().Error; err != nil { //ตรวจสอบข้อผิดพลาดในการคอมมิต transaction
 		tx.Rollback()
 		panic("Migration failed: " + err.Error())
 	} else {
@@ -28,8 +28,8 @@ func main() {
 	}
 }
 
-func playerMigration(tx *gorm.DB) {
-	tx.Migrator().CreateTable(&entities.Player{})
+func playerMigration(tx *gorm.DB) { //สร้างตาราง Player
+	tx.Migrator().CreateTable(&entities.Player{}) //ใช้ GORM สร้างตารางจาก struct Player ในแพ็กเกจ entities
 }
 func adminMigration(tx *gorm.DB) {
 	tx.Migrator().CreateTable(&entities.Admin{})

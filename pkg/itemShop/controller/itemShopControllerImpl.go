@@ -17,7 +17,7 @@ func NewItemShopControllerImpl(itemShopService _itemShopService.ItemShopService)
 	return &itemShopControllerImpl{itemShopService}
 }
 
-func (c *itemShopControllerImpl) Listing(pctx echo.Context) error {
+func (c *itemShopControllerImpl) Listing(pctx echo.Context) error { //override เมธอด Listing จาก interface
 	itemFilter := new(_itemShopModel.ItemFilter)
 	customEchoRequest := custom.NewCustomEchoRequest(pctx)
 

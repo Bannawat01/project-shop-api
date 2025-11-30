@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ItemShopRepositoryImpl struct {
+type ItemShopRepositoryImpl struct { //กำหนดโครงสร้างของ repository implementation
 	db     databases.Database
 	logger echo.Logger
 }
@@ -17,15 +17,15 @@ func NewItemShopRepositoryImpl(db databases.Database, logger echo.Logger) ItemSh
 	return &ItemShopRepositoryImpl{db, logger}
 }
 
-func (r *ItemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error) {
-	itemList := make([]*entities.Item, 0)
+func (r *ItemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error) { //ดึงรายการสินค้า
+	itemList := make([]*entities.Item, 0) //สร้าง slice เปล่าสำหรับเก็บรายการสินค้า
 
 	query := r.db.Connect().Model(&entities.Item{}).Where("is_archive = ?", false) //select * from items
 	if itemFilter.Name != "" {
 		query = query.Where("name ilike ?", "%"+itemFilter.Name+"%") // Filter by name if provided
 	}
 	if itemFilter.Description != "" {
-		query = query.Where("description ilike ?", "%"+itemFilter.Description+"%") //
+		query = query.Where("description ilike ?", "%"+itemFilter.Description+"%")
 	}
 
 	// (page -1 * size) = offset

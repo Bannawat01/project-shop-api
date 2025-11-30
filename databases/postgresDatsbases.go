@@ -10,17 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type postgresDatabase struct {
-	*gorm.DB
+type postgresDatabase struct { //นี่คือ struct ที่เก็บการเชื่อมต่อฐานข้อมูล
+	*gorm.DB //ฝัง gorm.DB เข้าไปใน struct นี้
 }
 
-var (
-	postgresDatabaseInstace *postgresDatabase
-	once                    sync.Once
+var ( //ตรงนี้ใช้สำหรับ singleton pattern
+	postgresDatabaseInstace *postgresDatabase //เก็บ instance ของฐานข้อมูล เพื่อให้มีแค่ instance เดียวตลอดการทำงาน
+	once                    sync.Once         //ใช้ sync.Once เพื่อให้มั่นใจว่าโค้ดภายในจะถูกเรียกใช้แค่ครั้งเดียว
 )
 
-func NewPostgresDatabase(conf *config.Database) Database {
-	once.Do(func() {
+func NewPostgresDatabase(conf *config.Database) Database { //ฟังก์ชันนี้ใช้สำหรับสร้างการเชื่อมต่อฐานข้อมูล
+	once.Do(func() { //ใช้ sync.Once เพื่อให้โค้ดภายในทำงานแค่ครั้งเดียว ไม่ว่าจะเรียกฟังก์ชันนี้กี่ครั้ง
 		dsn := fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s search_path=%s",
 			conf.Host,
@@ -32,14 +32,14 @@ func NewPostgresDatabase(conf *config.Database) Database {
 			conf.Schema,
 		)
 
-		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-		if err != nil {
+		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{}) //สร้างการเชื่อมต่อฐานข้อมูลด้วย GORM
+		if err != nil {                                            //ตรวจสอบข้อผิดพลาดในการเชื่อมต่อ
 			panic(err)
 		}
 
 		log.Printf("Connected to database %s", conf.DBName)
 
-		postgresDatabaseInstace = &postgresDatabase{conn}
+		postgresDatabaseInstace = &postgresDatabase{conn} //สร้าง instance ของ postgresDatabase และเก็บการเชื่อมต่อฐานข้อมูลไว้
 	})
 
 	return postgresDatabaseInstace

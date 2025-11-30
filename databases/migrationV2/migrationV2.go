@@ -56,5 +56,5 @@ func itemAdding(tx *gorm.DB) {
 			Picture:     "https://i.pinimg.com/564x/3f/25/84/3f25842cb4a8ad53a19575cc3d25c844.jpg",
 		},
 	}
-	tx.CreateInBatches(items, len(items))
+	tx.CreateInBatches(items, len(items)) //CreateInBatches ใช้สำหรับเพิ่มข้อมูลหลายๆ แถวในตารางฐานข้อมูลพร้อมกัน
 }

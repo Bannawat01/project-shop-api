@@ -9,9 +9,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+// กำหนดให้ yml
 type (
 	Database struct {
-		Host     string `mapstructure:"host" validate:"required"`
+		Host     string `mapstructure:"host" validate:"required"` //mapstructure คือการแมปค่าจากไฟล์คอนฟิก yml, validate คือการตรวจสอบค่าที่รับเข้ามา
 		Port     int    `mapstructure:"port" validate:"required"`
 		User     string `mapstructure:"user" validate:"required"`
 		Password string `mapstructure:"password" validate:"required"`
@@ -22,7 +23,7 @@ type (
 
 	Server struct {
 		Port         int           `mapstructure:"port" validate:"required"`
-		AllowOrigins []string      `mapstructure:"allowOrigins" validate:"required"`
+		AllowOrigins []string      `mapstructure:"allowOrigins" validate:"required"` //กำหนดค่า CORS
 		Timeout      time.Duration `mapstructure:"timeout" validate:"required"`
 		BodyLimit    string        `mapstructure:"bodyLimit" validate:"required"`
 	}
@@ -75,9 +76,9 @@ func ConfigGetting() *Config {
 			panic(err)
 		}
 
-		validate := validator.New()
+		validating := validator.New()
 
-		if err := validate.Struct(configInstance); err != nil {
+		if err := validating.Struct(configInstance); err != nil {
 			panic(err)
 		}
 	})
