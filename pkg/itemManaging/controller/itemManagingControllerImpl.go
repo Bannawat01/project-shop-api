@@ -25,12 +25,12 @@ func (c *itemManagingControllerImpl) Creating(pctx echo.Context) error {
 	customEchoRequest := custom.NewCustomEchoRequest(pctx)
 
 	if err := customEchoRequest.Bind(itemCreatingReq); err != nil {
-		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) // Handle validation error with custom error response
+		return custom.CustomError(pctx, http.StatusBadRequest, err) // Handle validation error with custom error response
 	}
 
 	item, err := c.itemManagingService.Creating(itemCreatingReq)
 	if err != nil {
-		return custom.CustomError(pctx, http.StatusInternalServerError, err.Error()) // Handle error with custom error response
+		return custom.CustomError(pctx, http.StatusInternalServerError, err) // Handle error with custom error response
 
 	}
 
@@ -42,19 +42,19 @@ func (c *itemManagingControllerImpl) Editing(pctx echo.Context) error {
 	itemID, err := c.getItemID(pctx)
 
 	if err != nil {
-		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) //
+		return custom.CustomError(pctx, http.StatusBadRequest, err) //
 	}
 
 	itemEditingReq := new(_itemManagingModel.ItemEditingReq)
 
 	customEchoRequest := custom.NewCustomEchoRequest(pctx)
 	if err := customEchoRequest.Bind(itemEditingReq); err != nil {
-		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) // Handle validation error with custom error response
+		return custom.CustomError(pctx, http.StatusBadRequest, err) // Handle validation error with custom error response
 	}
 
 	item, err := c.itemManagingService.Editing(itemID, itemEditingReq)
 	if err != nil {
-		return custom.CustomError(pctx, http.StatusInternalServerError, err.Error()) // Handle error with custom error response
+		return custom.CustomError(pctx, http.StatusInternalServerError, err) // Handle error with custom error response
 	}
 	return pctx.JSON(http.StatusOK, item) // Return the updated item as JSON response
 
@@ -64,11 +64,11 @@ func (c *itemManagingControllerImpl) Archiving(pctx echo.Context) error {
 	itemID, err := c.getItemID(pctx)
 
 	if err != nil {
-		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) //
+		return custom.CustomError(pctx, http.StatusBadRequest, err) //
 	}
 
 	if err = c.itemManagingService.Archive(itemID); err != nil {
-		return custom.CustomError(pctx, http.StatusInternalServerError, err.Error()) // Handle error with custom error response
+		return custom.CustomError(pctx, http.StatusInternalServerError, err) // Handle error with custom error response
 	}
 	return pctx.NoContent(http.StatusNoContent) // Return no content response for successful archiving
 

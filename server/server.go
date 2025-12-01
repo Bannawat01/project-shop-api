@@ -60,6 +60,7 @@ func (s *echoServer) Start() {
 	// })
 
 	// Initialize routes
+	s.initOAuth2Router()
 	s.initItemShopRouter()
 	s.initItemManagingRouter()
 

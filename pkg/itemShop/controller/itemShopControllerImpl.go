@@ -22,7 +22,7 @@ func (c *itemShopControllerImpl) Listing(pctx echo.Context) error { //override �
 	customEchoRequest := custom.NewCustomEchoRequest(pctx)
 
 	if err := customEchoRequest.Bind(itemFilter); err != nil {
-		return custom.CustomError(pctx, http.StatusBadRequest, err.Error()) // Handle validation error with custom error response
+		return custom.CustomError(pctx, http.StatusBadRequest, err) // Handle validation error with custom error response
 	}
 
 	// Set default pagination values if not provided
@@ -35,7 +35,7 @@ func (c *itemShopControllerImpl) Listing(pctx echo.Context) error { //override �
 
 	itemModelist, err := c.itemShopService.Listing(itemFilter)
 	if err != nil {
-		return custom.CustomError(pctx, http.StatusInternalServerError, err.Error()) // Handle error with custom error response
+		return custom.CustomError(pctx, http.StatusInternalServerError, err) // Handle error with custom error response
 	}
 	return pctx.JSON(http.StatusOK, itemModelist) //ส่งกลับไปเป็น json
 	// return custom.CustomError(pctx, http.StatusInternalServerError, (&_itemShopException.Itemisting{}).Error()) // Return custom error for item listing
