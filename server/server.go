@@ -12,6 +12,10 @@ import (
 
 	"github.com/Bannawat101/project-shop-api/config"
 	"github.com/Bannawat101/project-shop-api/databases"
+	_adminRepository "github.com/Bannawat101/project-shop-api/pkg/admin/repository"
+	_oauth2Controller "github.com/Bannawat101/project-shop-api/pkg/oauth2/controller"
+	_oauth2Service "github.com/Bannawat101/project-shop-api/pkg/oauth2/service"
+	_playerRepository "github.com/Bannawat101/project-shop-api/pkg/player/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -119,4 +123,12 @@ func getCORSMMiddleware(allawOrigin []string) echo.MiddlewareFunc { //มีไ�
 
 func getBoddyLimitMiddleware(bodyLimt string) echo.MiddlewareFunc {
 	return middleware.BodyLimit(bodyLimt)
+}
+
+func (s *echoServer) getAuthorizingMiddleware() {
+	playerRepository := _playerRepository.NewPlayerRepositoryImpl(s.db, s.app.Logger)
+	adminRepository := _adminRepository.NewAdminRepositoryImpl(s.db, s.app.Logger)
+
+	oauth2Service := _oauth2Service.NewGoogleOAuth2Service(playerRepository, adminRepository)
+	_oauth2Controller.NewGoogleOAuth2Controller(oauth2Service, s.conf.OAuth2, s.app.Logger)
 }

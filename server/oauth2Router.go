@@ -2,7 +2,6 @@ package server
 
 import (
 	_adminRepository "github.com/Bannawat101/project-shop-api/pkg/admin/repository"
-	_logger "github.com/Bannawat101/project-shop-api/pkg/logger"
 	_oauth2Controller "github.com/Bannawat101/project-shop-api/pkg/oauth2/controller"
 	_oauth2Service "github.com/Bannawat101/project-shop-api/pkg/oauth2/service"
 	_playerRepository "github.com/Bannawat101/project-shop-api/pkg/player/repository"
@@ -11,8 +10,8 @@ import (
 func (s *echoServer) initOAuth2Router() {
 	router := s.app.Group("/v1/oauth2/google")
 
-	playerRepository := _playerRepository.NewPlayerRepositoryImpl(s.db, _logger.NewEchoLoggerAdapter(s.app.Logger))
-	adminRepository := _adminRepository.NewAdminRepositoryImpl(s.db, _logger.NewEchoLoggerAdapter(s.app.Logger))
+	playerRepository := _playerRepository.NewPlayerRepositoryImpl(s.db, s.app.Logger)
+	adminRepository := _adminRepository.NewAdminRepositoryImpl(s.db, s.app.Logger)
 
 	oauth2Service := _oauth2Service.NewGoogleOAuth2Service(
 		playerRepository,
