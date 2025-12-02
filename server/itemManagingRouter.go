@@ -7,7 +7,7 @@ import (
 	_itemShopRepository "github.com/Bannawat101/project-shop-api/pkg/itemShop/repository"
 )
 
-func (s *echoServer) initItemShopRouter() {
+func (s *echoServer) initItemManagingRouter(m *authorizingMiddleware) {
 	router := s.app.Group("/v1/item-managing")
 
 	itemShopRepository := _itemShopRepository.NewItemShopRepositoryImpl(s.db, s.app.Logger)
@@ -19,7 +19,7 @@ func (s *echoServer) initItemShopRouter() {
 	)
 	itemManagingController := _itemManagingController.NewItemManagingControllerImpl(itemManagingService)
 
-	router.POST("", itemManagingController.Creating)
-	router.PATCH("/:itemID", itemManagingController.Editing)
-	router.DELETE("/:itemID", itemManagingController.Archiving)
+	router.POST("", itemManagingController.Creating, m.AdminAuthorizing)
+	router.PATCH("/:itemID", itemManagingController.Editing, m.AdminAuthorizing)
+	router.DELETE("/:itemID", itemManagingController.Archiving, m.AdminAuthorizing)
 }

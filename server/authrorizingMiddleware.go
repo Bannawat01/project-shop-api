@@ -18,7 +18,7 @@ func (m *authorizingMiddleware) PlayerAuthorized(pctx echo.Context, next echo.Ha
 	}
 }
 
-func (m *authorizingMiddleware) AdminAuthorized(pctx echo.Context, next echo.HandlerFunc) echo.HandlerFunc {
+func (m *authorizingMiddleware) AdminAuthorizing(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(pctx echo.Context) error {
 		return m.oauth2Controller.AdminAuthorized(pctx, next)
 	}

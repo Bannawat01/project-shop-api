@@ -7,6 +7,7 @@ import (
 	"github.com/Bannawat101/project-shop-api/pkg/custom"
 	_itemManagingModel "github.com/Bannawat101/project-shop-api/pkg/itemManaging/model"
 	_itemManagingService "github.com/Bannawat101/project-shop-api/pkg/itemManaging/service"
+	"github.com/Bannawat101/project-shop-api/pkg/validation"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,9 +25,15 @@ func (c *itemManagingControllerImpl) Creating(pctx echo.Context) error {
 	itemCreatingReq := new(_itemManagingModel.ItemCreateReq)
 	customEchoRequest := custom.NewCustomEchoRequest(pctx)
 
+	adminID, err := validation.AdminIDGetting(pctx)
+	if err != nil {
+		return custom.CustomError(pctx, http.StatusBadRequest, err) //
+	}
+
 	if err := customEchoRequest.Bind(itemCreatingReq); err != nil {
 		return custom.CustomError(pctx, http.StatusBadRequest, err) // Handle validation error with custom error response
 	}
+	itemCreatingReq.AdminID = adminID
 
 	item, err := c.itemManagingService.Creating(itemCreatingReq)
 	if err != nil {

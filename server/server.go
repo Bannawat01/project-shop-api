@@ -58,6 +58,8 @@ func (s *echoServer) Start() {
 	s.app.Use(bodyLimitMiddleware)  //ใช้ Body Limit middleware
 	s.app.Use(timeOutMiddleware)    //ใช้ Timeout middleware
 
+	authorizingMiddleware := s.getAuthorizingMiddleware()
+
 	s.app.GET("/v1/health", s.healthCheck)
 	// s.app.GET("/v1/panic", func(c echo.Context) error {
 	// 	panic("Panic")
@@ -66,7 +68,8 @@ func (s *echoServer) Start() {
 	// Initialize routes
 	s.initOAuth2Router()
 	s.initItemShopRouter()
-	s.initItemManagingRouter()
+	s.initItemManagingRouter(authorizingMiddleware)
+	s.initPlayerCoinRouter(authorizingMiddleware)
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM) //กระบวนการเพื่อที่จะ shutdown er จำเป็นต้องมีสัญญาณ 3 ตัวนี้
@@ -125,10 +128,24 @@ func getBoddyLimitMiddleware(bodyLimt string) echo.MiddlewareFunc {
 	return middleware.BodyLimit(bodyLimt)
 }
 
-func (s *echoServer) getAuthorizingMiddleware() {
+func (s *echoServer) getAuthorizingMiddleware() *authorizingMiddleware {
 	playerRepository := _playerRepository.NewPlayerRepositoryImpl(s.db, s.app.Logger)
 	adminRepository := _adminRepository.NewAdminRepositoryImpl(s.db, s.app.Logger)
 
-	oauth2Service := _oauth2Service.NewGoogleOAuth2Service(playerRepository, adminRepository)
-	_oauth2Controller.NewGoogleOAuth2Controller(oauth2Service, s.conf.OAuth2, s.app.Logger)
+	oauth2Service := _oauth2Service.NewGoogleOAuth2Service(
+		playerRepository,
+		adminRepository,
+	)
+
+	oauth2Controller := _oauth2Controller.NewGoogleOAuth2Controller(
+		oauth2Service,
+		s.conf.OAuth2,
+		s.app.Logger,
+	)
+
+	return &authorizingMiddleware{
+		oauth2Controller: oauth2Controller,
+		oauth2Conf:       s.conf.OAuth2,
+		logger:           s.app.Logger,
+	}
 }
