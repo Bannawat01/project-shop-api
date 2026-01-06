@@ -1,18 +1,30 @@
 package server
 
 import (
+	_inventoryRepository "github.com/Bannawat101/project-shop-api/pkg/inventory/repository"
 	_itemShopController "github.com/Bannawat101/project-shop-api/pkg/itemShop/controller"
 	_itemShopRepository "github.com/Bannawat101/project-shop-api/pkg/itemShop/repository"
 	_itemShopService "github.com/Bannawat101/project-shop-api/pkg/itemShop/service"
+	_playerCoinRepository "github.com/Bannawat101/project-shop-api/pkg/playerCoin/repository"
 )
 
-func (s *echoServer) initItemShopRouter() { //กำหนด route สำหรับจัดการสินค้า
-	router := s.app.Group("/v1/item-shop") //สร้าง group ของ route เพื่อจัดการกับ item shop .Group จะช่วยจัดกลุ่ม route ที่เกี่ยวข้องกันให้อยู่ด้วยกัน
+func (s *echoServer) initItemShopRouter(m *authorizingMiddleware) {
+	router := s.app.Group("/v1/item-shop")
 
-	itemShopRepository := _itemShopRepository.NewItemShopRepositoryImpl(s.db, s.app.Logger) //สร้าง instance ของ repository service และ controller
-	itemShopService := _itemShopService.NewItemShopServiceImpl(itemShopRepository)          //เชื่อมโยงกัน ระหว่าง repository กับ service
-	itemShopController := _itemShopController.NewItemShopControllerImpl(itemShopService)    //เชื่อมโยงกัน ระหว่าง service กับ controller
+	playerCoinRepository := _playerCoinRepository.NewPlayerCoinRepositoryImpl(s.db, s.app.Logger)
+	inventoryRepository := _inventoryRepository.NewInventoryRepositoryImpl(s.db, s.app.Logger)
+	itemShopRepository := _itemShopRepository.NewItemShopRepositoryImpl(s.db, s.app.Logger)
 
-	router.GET("", itemShopController.Listing) //หลังจากที่ทำ router เสร็จแล้ว ตัว application ยังไม่รู้ว่าเรามีการประกาศ route นี้อยู่
-	//ดังนั้นเราจึงต้องบอก application ว่า route นี้มีอยู่จริง เราต้องไป inject ลง server อีกที
+	itemShopService := _itemShopService.NewItemShopServiceImpl(
+		itemShopRepository,
+		playerCoinRepository,
+		inventoryRepository,
+		s.app.Logger,
+	)
+
+	itemShopController := _itemShopController.NewItemShopControllerImpl(itemShopService)
+
+	router.GET("", itemShopController.Listing)
+	router.POST("/buying", itemShopController.Buying, m.PlayerAuthorizing)
+	router.POST("/selling", itemShopController.Selling, m.PlayerAuthorizing)
 }

@@ -1,7 +1,7 @@
 package exception
 
-type Itemisting struct{}
+type ItemListing struct{}
 
-func (e *Itemisting) Error() string { //over
+func (e *ItemListing) Error() string { //over
 	return "Item listing error"
 }

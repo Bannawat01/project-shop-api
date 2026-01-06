@@ -67,9 +67,10 @@ func (s *echoServer) Start() {
 
 	// Initialize routes
 	s.initOAuth2Router()
-	s.initItemShopRouter()
+	s.initItemShopRouter(authorizingMiddleware)
 	s.initItemManagingRouter(authorizingMiddleware)
 	s.initPlayerCoinRouter(authorizingMiddleware)
+	s.initInventoryRouter(authorizingMiddleware)
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM) //กระบวนการเพื่อที่จะ shutdown er จำเป็นต้องมีสัญญาณ 3 ตัวนี้

@@ -22,13 +22,14 @@ func NewItemManagingControllerImpl(
 }
 
 func (c *itemManagingControllerImpl) Creating(pctx echo.Context) error {
-	itemCreatingReq := new(_itemManagingModel.ItemCreateReq)
-	customEchoRequest := custom.NewCustomEchoRequest(pctx)
-
 	adminID, err := validation.AdminIDGetting(pctx)
 	if err != nil {
 		return custom.CustomError(pctx, http.StatusBadRequest, err) //
 	}
+
+	itemCreatingReq := new(_itemManagingModel.ItemCreateReq)
+
+	customEchoRequest := custom.NewCustomEchoRequest(pctx)
 
 	if err := customEchoRequest.Bind(itemCreatingReq); err != nil {
 		return custom.CustomError(pctx, http.StatusBadRequest, err) // Handle validation error with custom error response

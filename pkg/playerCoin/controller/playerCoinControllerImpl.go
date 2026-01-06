@@ -29,10 +29,10 @@ func (c *playerCoinControllerImpl) CoinAdding(pctx echo.Context) error {
 	coinAddingReq := new(_playerCoinModel.CoinAddingReq)
 
 	customEchoRequest := custom.NewCustomEchoRequest(pctx)
+
 	if err := customEchoRequest.Bind(coinAddingReq); err != nil {
 		return custom.CustomError(pctx, http.StatusBadRequest, err)
 	}
-
 	coinAddingReq.PlayerID = playerID
 
 	playerCoin, err := c.playerCoinService.CoinAdding(coinAddingReq)
@@ -41,4 +41,13 @@ func (c *playerCoinControllerImpl) CoinAdding(pctx echo.Context) error {
 	}
 
 	return pctx.JSON(http.StatusCreated, playerCoin)
+}
+
+func (c *playerCoinControllerImpl) Showing(pctx echo.Context) error {
+	playerID, err := validation.PlayerIDGetting(pctx)
+	if err != nil {
+		return custom.CustomError(pctx, http.StatusBadRequest, err)
+	}
+	playerCoinShowing := c.playerCoinService.Showing(playerID)
+	return pctx.JSON(http.StatusOK, playerCoinShowing)
 }

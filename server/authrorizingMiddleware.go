@@ -12,14 +12,14 @@ type authorizingMiddleware struct {
 	logger           echo.Logger
 }
 
-func (m *authorizingMiddleware) PlayerAuthorized(pctx echo.Context, next echo.HandlerFunc) echo.HandlerFunc {
+func (m *authorizingMiddleware) PlayerAuthorizing(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(pctx echo.Context) error {
-		return m.oauth2Controller.PlayerAuthorized(pctx, next)
+		return m.oauth2Controller.PlayerAuthorizing(pctx, next)
 	}
 }
 
 func (m *authorizingMiddleware) AdminAuthorizing(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(pctx echo.Context) error {
-		return m.oauth2Controller.AdminAuthorized(pctx, next)
+		return m.oauth2Controller.AdminAuthorizing(pctx, next)
 	}
 }

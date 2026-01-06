@@ -1,9 +1,11 @@
 package exception
 
+import "fmt"
+
 type ItemNotFound struct {
-	ItemID string
+	ItemID uint64
 }
 
 func (e *ItemNotFound) Error() string {
-	return "Item with ID " + string(e.ItemID) + " not found"
+	return fmt.Sprintf("itemID: %d was not found", e.ItemID)
 }

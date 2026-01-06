@@ -22,10 +22,22 @@ func (s *playerServideCoinImpl) CoinAdding(coinAddingReq *_playerCoinModel.CoinA
 		Amount:   coinAddingReq.Amount,
 	}
 
-	playerCoinEntityResult, err := s.PlayerCoinRepository.CoinAdding(playerCoinEntity)
+	playerCoinEntityResult, err := s.PlayerCoinRepository.CoinAdding(playerCoinEntity, nil)
 	if err != nil {
 		return nil, err
 	}
+	playerCoinEntityResult.PlayerID = coinAddingReq.PlayerID
 
 	return playerCoinEntityResult.ToPlayerCoinModel(), nil
+}
+
+func (s *playerServideCoinImpl) Showing(playerID string) *_playerCoinModel.PlayerCoinShowing {
+	playerCoinShowing, err := s.PlayerCoinRepository.Showing(playerID)
+	if err != nil {
+		return &_playerCoinModel.PlayerCoinShowing{
+			PlayerID: playerID,
+			Coin:     0,
+		}
+	}
+	return playerCoinShowing
 }

@@ -10,7 +10,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func (c *googleOAuth2Controller) PlayerAuthorized(pctx echo.Context, next echo.HandlerFunc) error {
+func (c *googleOAuth2Controller) PlayerAuthorizing(pctx echo.Context, next echo.HandlerFunc) error {
 	ctx := context.Background()
 
 	TokenSource, err := c.getTokenSource(pctx)
@@ -25,7 +25,7 @@ func (c *googleOAuth2Controller) PlayerAuthorized(pctx echo.Context, next echo.H
 		}
 	}
 
-	client := playerGoogleoAuth2.Client(ctx, TokenSource)
+	client := playerGoogleOAuth2.Client(ctx, TokenSource)
 
 	userInfo, err := c.getUserInfo(client)
 	if err != nil {
@@ -41,7 +41,7 @@ func (c *googleOAuth2Controller) PlayerAuthorized(pctx echo.Context, next echo.H
 	return next(pctx)
 }
 
-func (c *googleOAuth2Controller) AdminAuthorized(pctx echo.Context, next echo.HandlerFunc) error {
+func (c *googleOAuth2Controller) AdminAuthorizing(pctx echo.Context, next echo.HandlerFunc) error {
 	ctx := context.Background()
 
 	TokenSource, err := c.getTokenSource(pctx)
@@ -56,7 +56,7 @@ func (c *googleOAuth2Controller) AdminAuthorized(pctx echo.Context, next echo.Ha
 		}
 	}
 
-	client := adminGoogleoAuth2.Client(ctx, TokenSource)
+	client := adminGoogleOAuth2.Client(ctx, TokenSource)
 
 	userInfo, err := c.getUserInfo(client)
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *googleOAuth2Controller) AdminAuthorized(pctx echo.Context, next echo.Ha
 func (c *googleOAuth2Controller) adminTokenRefreshing(pctx echo.Context, token *oauth2.Token) (*oauth2.Token, error) {
 	ctx := context.Background()
 
-	updateToken, err := adminGoogleoAuth2.TokenSource(ctx, token).Token()
+	updateToken, err := adminGoogleOAuth2.TokenSource(ctx, token).Token()
 	if err != nil {
 		return nil, &_oauth2Exception.Unauthorized{}
 	}
@@ -89,7 +89,7 @@ func (c *googleOAuth2Controller) adminTokenRefreshing(pctx echo.Context, token *
 func (c *googleOAuth2Controller) playerTokenRefreshing(pctx echo.Context, token *oauth2.Token) (*oauth2.Token, error) {
 	ctx := context.Background()
 
-	updateToken, err := playerGoogleoAuth2.TokenSource(ctx, token).Token()
+	updateToken, err := playerGoogleOAuth2.TokenSource(ctx, token).Token()
 	if err != nil {
 		return nil, &_oauth2Exception.Unauthorized{}
 	}
