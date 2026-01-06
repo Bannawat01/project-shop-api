@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	conf := config.ConfigGetting()
+	conf := config.ConfigGetting() //เรียก config มาจากไฟล์ config
 	db := databases.NewPostgresDatabase(conf.Database)
 	server := server.NewEchoServer(conf, db)
 

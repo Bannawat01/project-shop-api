@@ -53,11 +53,11 @@ type (
 )
 
 var (
-	once           sync.Once
-	configInstance *Config
+	once           sync.Once //ใช้ sync.Once เพื่อให้แน่ใจว่าโค้ดภายในจะถูกเรียกใช้เพียงครั้งเดียว
+	configInstance *Config   //ใช้ configInstance เก็บค่าคอนฟิกที่อ่านมาได้
 )
 
-func ConfigGetting() *Config {
+func ConfigGetting() *Config { //การใช้งาน once.Do จะทำให้โค้ดภายในฟังก์ชันนี้ถูกเรียกใช้เพียงครั้งเดียวเท่านั้น
 	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yml")
